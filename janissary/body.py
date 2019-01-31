@@ -150,6 +150,31 @@ class BuildCommand(TimestampedCommand):
         a['selected_ids'] = [br.read_u32() for _ in range(a['selection_count'])]
         return a
 
+class GarrisonCommand(TimestampedCommand):
+    GARRISON_TYPES = {
+        1: "PACK", # For trebuchet
+        2: "UNPACK", # For trebuchet
+        4: "CANCEL", # when cancelling units in training queue
+        5: "GARRISON", # garrisoning units in building or boat
+    }
+    def attributes(self):
+        a = {}
+        br = BinReader(self.data)
+        br.read_u8() # command id
+        selection_count = br.read_u8()
+        br.read_u16()
+        a['building_id'] = br.read_u32()
+        a['garrison_type_id'] = br.read_u8()
+        a['garrison_type'] = self.GARRISON_TYPES.get(a['garrison_type_id'], "UNKNOWN")
+        a['count'] = br.read_u8() # This may apply only to CANCEL commands
+        br.read_u16()
+        a['x_coord'] = br.read_float()
+        a['y_coord'] = br.read_float()
+        br.read_u32() # always FFs
+        a['selected_ids'] = [br.read_u32() for _ in range(selection_count)]
+        return a
+        
+
 class ResearchCommand(TimestampedCommand):
     def player_id(self):
         br = BinReader(self.data)
@@ -186,7 +211,10 @@ class AttackCommand(TimestampedCommand):
         selection_count = br.read_u32()
         a['x_coord'] = br.read_float()
         a['y_coord'] = br.read_float()
-        a['selected_ids'] = [br.read_u32() for _ in range(selection_count)]
+        if selection_count < 0xFF:
+            a['selected_ids'] = [br.read_u32() for _ in range(selection_count)]
+        else:
+            a['selected_ids'] = []
         return a
 
 class MoveCommand(TimestampedCommand):
@@ -209,6 +237,7 @@ class MoveCommand(TimestampedCommand):
             a['selected_ids'] = [br.read_u32() for _ in range(selection_count)]
         else:
             a['selected_ids'] = []
+        return a
         
 class StopCommand(TimestampedCommand):
     def attributes(self):
@@ -218,13 +247,32 @@ class StopCommand(TimestampedCommand):
         return {'selected_ids': [br.read_u32() for _ in range(selected_count)]}
 
 class Train2Command(TimestampedCommand):
-    def attributes(self):
-        return {}
+    def player_id(self):
+        br = BinReader(self.data)
+        br.read_u8() # command id
+        return br.read_u8()
 
+    def attributes(self):
+        a = {}
+        br = BinReader(self.data)
+        br.read_u8() # command id
+        a['player_id'] = br.read_u8()
+        a['building_type'] = br.read_u16()
+        tmp = br.read_u16() # always 1
+        if tmp != 1:
+            raise RuntimeError("Found an unexpected value. Look into me.")
+        a['unit_type'] = br.read_u16()
+        a['count'] = br.read_u16()
+        a['building_id'] = br.read_u16()
+        tmp = br.read_u16() # always 0
+        if tmp != 0:
+            raise RuntimeError("Found an unexpected value. Look into me")
+        return a
     
 COMMAND_TYPE_MAP = {
     "ATTACK": AttackCommand,
     "BUILD": BuildCommand,
+    "GARRISON": GarrisonCommand,
     "MOVE": MoveCommand,
     "TRAIN2": Train2Command,
     "STOP": StopCommand,

@@ -19,6 +19,8 @@ CIVILIZATION_MAP = {
     18: "Koreans",
 }
 
+# NOTE: It seems likely that all objects share the same ID namespace, and so
+# buildings and units may be combined.
 UNIT_MAP = {
     4: "Archer",
     5: "Hand Cannoneer",
@@ -122,7 +124,7 @@ COMMAND_NAME_MAP = {
     0x80: "BACKTOWORK",
     0x81: "TRAIN2",
     0xFF: "POSTGAME",
-} 
+}
 
 def civilization_name(civ_id):
     if civ_id in CIVILIZATION_MAP:
@@ -138,7 +140,7 @@ def unit_name(unit_id):
 
 def command_name(command_id):
     return COMMAND_NAME_MAP.get(command_id, "UNKNOWN %02x" % command_id)
-            
+
 def map_type_name(map_id):
     return MAP_TYPE_MAP.get(map_id, "UNKNOWN (%d)" % map_id)
 

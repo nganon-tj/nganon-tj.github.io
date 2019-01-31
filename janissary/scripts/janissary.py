@@ -5,7 +5,7 @@ import yaml
 from tabulate import tabulate
 
 from janissary.static import command_name
-from janissary.report import render_html
+from janissary.reports import render_html
 
 
 @click.group()

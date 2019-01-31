@@ -9,6 +9,7 @@ setup(
     # installed or upgraded on the target machine
     install_requires=[
         'click',
+        'jinja2',
         'pyyaml',
         'tabulate'
     ],

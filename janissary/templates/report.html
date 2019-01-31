@@ -1,0 +1,67 @@
+<html>
+<head>
+    <style type=text/css>
+        {% include "report.css" %}
+    </style>
+</head>
+<body>
+    <h2>Game Information</h2>
+    <table>
+        {% for attr in game_attrs %}
+        <tr>
+            <td class="attrName">{{attr[0] + ":"}}</td>
+            <td>{{attr[1]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h2>Players</h2>
+    <table>
+        
+        <tr>
+            <th>Player Name</th>
+            <th>Civilization</th>
+            <th>Team</th>
+        </tr>
+        {% for player in players %}
+        <tr>
+            <td>{{player.name}}</td>
+            <td>{{player.civilization_name}}</td>
+            <td>{{player.team}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h2>Command Summary</h2>
+    <h3>Player Commands</h3>
+    <table>
+        <tr>
+            {% for header in command_summary.player_command_headers() %}
+            <th>{{header}}</th>
+            {% endfor %}
+        </tr>
+        {% for row in command_summary.player_command_rows() %}
+        <tr>
+            {% for cell in row %}
+            <td>{{cell}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    <h3>Unassigned Commands</h3>
+    Some commands are recorded, but are not assigned to a particular player. 
+    This could be either because there is not enough information in the log 
+    to correlate them, or because support for these commands just hasn't been
+    added yet. 
+    <table>
+        <tr>
+            {% for header in command_summary.unassigned_command_headers() %}
+            <th>{{header}}</th>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for count in command_summary.unassigned_command_counts() %}
+            <td>{{count}}</td>
+            {% endfor %}
+        </tr>
+    </table>
+</body>
+</html>

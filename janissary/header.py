@@ -41,7 +41,7 @@ class Header(object):
         # No idea what these mean, but many thanks to whoever figured out that 
         # these bytes must be skipped
         datasets_count = sio.read_u32()
-        #import pdb; pdb.set_trace()
+
         d['datasets'] = [sio.read_u32() for _ in range(datasets_count)]
         
         d['difficulty'] = sio.read_u32()
@@ -55,8 +55,7 @@ class Header(object):
         d['game_type'] = sio.read_u32()
         
         if d['version'] >= 1006.0:
-            # Unknown ...unsure
-            import pdb; pdb.set_trace()
+            # Unknown. There seems to be an extra 32-bit word in HD 5.8
             sio.read_u32()
 
         # 'separator'

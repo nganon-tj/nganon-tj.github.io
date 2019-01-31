@@ -1,7 +1,11 @@
 import click
 import janissary
+import janissary.body
 import yaml
 from tabulate import tabulate
+
+from janissary.static import command_name
+from janissary.report import render_html
 
 
 @click.group()
@@ -76,7 +80,8 @@ def print_hex(data):
     s = ""
     for b in data:
         if (counter % 16) == 0:
-            s += "\n"
+            if counter != 0:
+                s += "\n"
             s += "%04x: " % counter
         counter += 1
         s += "%02x" % b
@@ -87,18 +92,22 @@ def print_hex(data):
 @main.command()
 @click.argument('gamefile')
 def command_summary(gamefile):
+    """Print some info about the commands found in the log body (debug)
+    """
     with open(gamefile, 'rb') as f:
         rec = janissary.RecordedGame(f)
-        body = janissary.BodyParser(rec.body_bytes())
+        body = janissary.BodyParser(janissary.BinReader(rec.body_bytes()))
     
     command_counts = {}
     for op in body:
+        if isinstance(op, janissary.Sync):
+            print("Sync %d" % op.time)
         if isinstance(op, janissary.Command):
             if op.type not in command_counts:
                 command_counts[op.type] = 0
             command_counts[op.type] += 1
-            print("Command %d\n" % op.type)
             if op.type == 0x81:
+                print("Command %x" % op.type)
                 print_hex(op.data)
 
 
@@ -107,6 +116,51 @@ def command_summary(gamefile):
 
     rows = []
     for k, v in command_counts.items():
-        rows.append((k, COMMAND_NAME_MAP.get(k, "UNKNOWN"), v))
+        rows.append(("0x%02x" % k, command_name(k), v))
+    rows = sorted(rows, key=lambda x: x[0])
     
     print(tabulate(rows, headers=["CMD ID", "CMD Name", "Count"]))
+
+@main.command()
+@click.argument('gamefile')
+@click.argument('outputfile')
+def command_yaml(gamefile, outputfile):
+    """Create a yaml output with commands
+    """
+    with open(gamefile, 'rb') as f:
+        rec = janissary.RecordedGame(f)
+        body_reader = janissary.BinReader(rec.body_bytes())
+        commands = janissary.body.timestamped_commands(body_reader)
+    
+    commands = [c.serializable() for c in commands]
+    with open(outputfile, 'w') as f:
+        yaml.dump(commands, f)
+
+
+@main.command()
+@click.argument('gamefile')
+def sync_summary(gamefile):
+    """Print a list of sync message (debug)
+    """
+    with open(gamefile, 'rb') as f:
+        rec = janissary.RecordedGame(f)
+        body_reader = janissary.BinReader(rec.body_bytes())
+
+    body = janissary.BodyParser(body_reader)
+    for op in body:
+        if isinstance(op, janissary.Sync):
+            print("SYNC time_delta=%d, player_id=%d" % (op.time_delta, op.player_index))
+
+@main.command()
+@click.argument('gamefile')
+@click.argument('htmlfile')
+def report(gamefile, htmlfile):
+    """Render html report"""
+    with open(gamefile, 'rb') as f:
+        rec = janissary.RecordedGame(f)
+        header_dict = rec.header().header_dict()
+        body_reader = janissary.BinReader(rec.body_bytes())
+        timestamped_commands = janissary.body.timestamped_commands(body_reader)
+    
+    with open(htmlfile, 'w') as f:
+        f.write(render_html(header_dict, timestamped_commands))

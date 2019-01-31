@@ -1,5 +1,22 @@
 CIVILIZATION_MAP = {
-    0: "Unknown 0"
+    1: "Britons",
+    2: "Franks",
+    3: "Goths",
+    4: "Teutons",
+    5: "Japanese",
+    6: "Chinese",
+    7: "Byzantines",
+    8: "Persians",
+    9: "Saracens",
+    10: "Turks",
+    11: "Vikings",
+    12: "Mongols",
+    13: "Celts",
+    14: "Spanish",
+    15: "Aztecs",
+    16: "Mayans",
+    17: "Huns",
+    18: "Koreans",
 }
 
 UNIT_MAP = {
@@ -34,6 +51,31 @@ BUILDING_TYPE_MAP = {
 }
 
 MAP_TYPE_MAP = {
+    9: "Arabia",
+    10: "Archipelago",
+    11: "Baltic",
+    12: "Black Forest",
+    13: "Coastal",
+    14: "Continental",
+    15: "Crater Lake",
+    16: "Fortress",
+    17: "Gold Rush",
+    18: "Highland",
+    19: "Islands",
+    20: "Mediterranean",
+    21: "Migration",
+    22: "Rivers",
+    23: "Team Islands",
+    24: "Random",
+    25: "Scandinavia",
+    26: "Mongolia",
+    27: "Yucatan",
+    28: "Salt Marsh",
+    29: "Arena",
+    30: "King of the Hill",
+    31: "Oasis",
+    32: "Ghost Lake",
+    33: "Nomad",
 }
 
 GAME_TYPE_MAP = {

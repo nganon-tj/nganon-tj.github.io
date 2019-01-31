@@ -79,6 +79,9 @@ MAP_TYPE_MAP = {
 }
 
 GAME_TYPE_MAP = {
+    0: "Random Map",
+    1: "Regicide",
+    2: "Death Match",
 }
 
 COMMAND_NAME_MAP = {

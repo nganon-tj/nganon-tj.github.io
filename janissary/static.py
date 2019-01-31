@@ -3,13 +3,34 @@ CIVILIZATION_MAP = {
 }
 
 UNIT_MAP = {
-    0: "Unknown Unit 0"
+    4: "Archer",
+    5: "Hand Cannoneer",
+    7: "Skirmisher",
+    35: "Ram",
+    39: "Cavalry Archer",
+    74: "Infantry",
+    83: "Peasant",
+    93: "Pikeman",
+    279: "Scorpion",
+    280: "Onager",
+    331: "Trebuchet",
+    440: "Petard",
+    725: "Jaguar Warrior",
+    751: "Eagle Warrior"
 }
 
 BUILDING_TYPE_MAP = {
     12: "Barracks",
+    49: "Siege Workshop",
+    68: "Mill",
     70: "House",
-    87: "Archery Range"
+    82: "Castle",
+    84: "Market",
+    87: "Archery Range",
+    101: "Stables",
+    103: "Blacksmith",
+    109: "Town Hall",
+
 }
 
 MAP_TYPE_MAP = {

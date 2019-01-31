@@ -65,16 +65,6 @@ def body_raw(gamefile, outputfile):
             output.write(rec.body_bytes())
 
 
-COMMAND_NAME_MAP = {
-    0x0B: "RESIGN",
-    0x65: "RESEARCH",
-    0x77: "TRAIN",
-    0x64: "TRAIN SINGLE",
-    0x66: "BUILD",
-    0x6C: "TRIBUTE",
-    0xFF: "POSTGAME"
-} 
-
 def print_hex(data):
     counter = 0
     s = ""

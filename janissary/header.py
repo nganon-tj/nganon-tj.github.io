@@ -52,11 +52,12 @@ class Header(object):
         d['starting_resources'] = sio.read_u32()
         d['starting_age'] = sio.read_u32()
         d['ending_age'] = sio.read_u32()
-        d['game_type'] = sio.read_u32()
-        
+
         if d['version'] >= 1006.0:
             # Unknown. There seems to be an extra 32-bit word in HD 5.8
             sio.read_u32()
+
+        d['game_type'] = sio.read_u32()
 
         # 'separator'
         sio.read_u32()

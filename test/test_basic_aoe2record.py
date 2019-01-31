@@ -16,7 +16,7 @@ def test_header_bytes(datafile):
         rec = janissary.RecordedGame(f)
         header_bytes = rec.header_bytes()
 
-        header_data = rec.header().header_dict()
-        with open('header.yml') as output:
-            yaml.dump(header_data, outfile, default_flow_style=False)
+    assert isinstance(header_bytes, bytes)
+    assert len(header_bytes) == 1036223
+
             

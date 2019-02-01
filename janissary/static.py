@@ -25,17 +25,25 @@ UNIT_MAP = {
     4: "Archer",
     5: "Hand Cannoneer",
     7: "Skirmisher",
+    8: "Longbowman",
+    13: "Fishing Ship",
     35: "Ram",
+    38: "Knight",
     39: "Cavalry Archer",
-    74: "Infantry",
+    40: "Cataphract",
+    74: "Militia",
     83: "Peasant",
     93: "Pikeman",
+    125: "Monk",
     279: "Scorpion",
     280: "Onager",
     331: "Trebuchet",
     440: "Petard",
+    448: "Scout Cavalry",
+    539: "Galley",
     725: "Jaguar Warrior",
-    751: "Eagle Warrior"
+    751: "Eagle Warrior",
+    763: "Plumed Archer"
 }
 
 BUILDING_TYPE_MAP = {

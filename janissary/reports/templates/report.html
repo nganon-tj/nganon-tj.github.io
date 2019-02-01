@@ -6,6 +6,9 @@
     <script type="application/javascript">
         {% include "main.js" %}
     </script>
+    <script type="application/json" id="data">
+        {{jsdata}}
+    </script>
 
 </head>
 <body>
@@ -33,6 +36,12 @@
         </tr>
         {% endfor %}
     </table>
+
+    <h2>Action Rate</h2>
+    <div style="width:75%;">
+        <canvas id="apsgraph"></canvas>
+    </div>
+
     <h2>Unit Creation</h2>
     This data is based on counting of unit training commands. As we have no idea when units are
     lost, or for that matter when they complete training, this ideally shows the total number of 

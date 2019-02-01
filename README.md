@@ -52,3 +52,13 @@ the log file, only the actions taken by players (e.g. "attack", "move",
 "build", "train a unit"). This means you can't recreate the game state (e.g.
 unit positions, when units die, etc) without a perfect recreation of the game
 mechanics.
+
+### Javascript/webpack bundle
+
+The HTML report uses some javascript for plotting, etc. This is built as a 
+webpack bundle, and lives in `janissary/reports/js/`. The compiled bundle is
+stored in git to allow this package to be installed without the node dependency,
+but to update any of the javascript you will need node and yarn. 
+
+`yarn build` in the `js` directory will update `janissary/reports/js/dist/main.js`, 
+the compiled bundle.

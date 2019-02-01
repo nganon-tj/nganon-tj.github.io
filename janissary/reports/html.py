@@ -23,7 +23,8 @@ def render_html(header_dict, timestamped_commands):
     command_summary = CommandSummaryReport(header_dict, timestamped_commands)
 
     fileDir = os.path.dirname(os.path.realpath(__file__))
-    templateLoader = jinja2.FileSystemLoader(searchpath=os.path.join(fileDir, "templates/"))
+    searchpath = [os.path.join(fileDir, "templates/"), os.path.join(fileDir, "js/dist")]
+    templateLoader = jinja2.FileSystemLoader(searchpath=searchpath)
     templateEnv = jinja2.Environment(loader=templateLoader)
     template = templateEnv.get_template("report.html")
     return template.render(game_attrs=game_attributes, players=players, command_summary=command_summary)

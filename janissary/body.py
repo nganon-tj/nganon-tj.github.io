@@ -349,7 +349,8 @@ class GarrisonCommand(TimestampedCommand):
         a['building_id'] = br.read_u32()
         a['garrison_type_id'] = br.read_u8()
         a['garrison_type'] = self.GARRISON_TYPES.get(a['garrison_type_id'], "UNKNOWN")
-        a['count'] = br.read_u8() # This may apply only to CANCEL commands
+        # I believe this is the position in the queue which is cancelled
+        a['position'] = br.read_u8() # This may apply only to CANCEL commands. 
         br.read_u16()
         a['x_coord'] = br.read_float()
         a['y_coord'] = br.read_float()

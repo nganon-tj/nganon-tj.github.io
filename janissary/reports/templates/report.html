@@ -20,7 +20,6 @@
     </table>
     <h2>Players</h2>
     <table>
-        
         <tr>
             <th>Player Name</th>
             <th>Civilization</th>
@@ -34,7 +33,31 @@
         </tr>
         {% endfor %}
     </table>
+    <h2>Unit Creation</h2>
+    This data is based on counting of unit training commands. As we have no idea when units are
+    lost, or for that matter when they complete training, this ideally shows the total number of 
+    units that were produced, or are queued to be procuded at the end of the game. However, if 
+    different unit types are produced concurrently at the same building, and some units are 
+    cancelled, this can lead to errors in the count. The analyzer may cancel the wrong unit
+    type. 
+    <table>
+        <tr>
+            {% for header in unit_production.total_units_table_header() %}
+            <th>{{header}}</th>
+            {% endfor %}
+        </tr>
+        {% for row in unit_production.total_units_rows() %}
+        <tr>
+            {% for cell in row %}
+            <td>{{cell}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
     <h2>Command Summary</h2>
+    Shows total count of each of the command type in log, by player. In some cases, commands 
+    have multiple purposes. For example, GARRISON is used to garrison troops in a building, to 
+    pack/unpack a trebuchet, and to cancel units in training. 
     <h3>Player Commands</h3>
     <table>
         <tr>

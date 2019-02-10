@@ -62,3 +62,18 @@ class CommandSummaryReport(object):
         command_ids = self._unassigned_commands.keys()
         return [self._unassigned_commands[cid] for cid in command_ids]
 
+    def serializeable(self):
+        """Returns a serializeable dict representing the report
+
+        For serialization to, e.g. JSON or YAML
+        """
+        return {
+            'player_command_table': {
+                'header': self.player_command_headers(),
+                'rows': self.player_command_rows()
+            },
+            'unassigned_command_headers': {
+                'header': self.unassigned_command_headers(),
+                'row': self.unassigned_command_counts()
+            }
+        }

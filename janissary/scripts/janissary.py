@@ -1,11 +1,12 @@
 import click
 import janissary
 import janissary.body
+import json
 import yaml
 from tabulate import tabulate
 
 from janissary.static import command_name
-from janissary.reports import render_html
+import janissary.reports
 
 
 @click.group()
@@ -143,14 +144,18 @@ def sync_summary(gamefile):
 
 @main.command()
 @click.argument('gamefile')
-@click.argument('htmlfile')
-def report(gamefile, htmlfile):
-    """Render html report"""
+@click.argument('outputfile')
+@click.option('--json', 'json_output_flag', is_flag=True, default=False, help="Write JSON output")
+def report(gamefile, outputfile, json_output_flag):
+    """Render report as HTML or JSON"""
     with open(gamefile, 'rb') as f:
         rec = janissary.RecordedGame(f)
         header_dict = rec.header().header_dict()
         body_reader = janissary.BinReader(rec.body_bytes())
         timestamped_commands = janissary.body.timestamped_commands(body_reader)
     
-    with open(htmlfile, 'w') as f:
-        f.write(render_html(header_dict, timestamped_commands))
+    with open(outputfile, 'w') as f:
+        if json_output_flag:
+            f.write(json.dumps(janissary.reports.report(header_dict, timestamped_commands)))
+        else:
+            f.write(janissary.reports.render_html(header_dict, timestamped_commands))

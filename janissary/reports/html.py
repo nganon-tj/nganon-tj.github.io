@@ -2,31 +2,15 @@ import jinja2
 import json
 import os
 
+from .report import report
 
-from .command_summary_report import CommandSummaryReport
-from .unit_production_report import UnitProductionReport
-from .actions_rate_report import ActionsRateReport
-import janissary.static as static
+@jinja2.contextfunction                                                                                                                                                                                         
+def include_file(ctx, name):                                                                                                                                                                                   
+    env = ctx.environment                                                                                                                                                                                      
+    return jinja2.Markup(env.loader.get_source(env, name)[0])  
 
 def render_html(header_dict, timestamped_commands):
-    # Collect a subset of game level config options to display
-    game_attributes = [
-        ('Title', header_dict['game_title']),
-        ('Map Size', header_dict['map_size']),
-        ('Map Type', static.map_type_name(header_dict['map_id'])),
-        ('Game Type', static.game_type_name(header_dict['game_type'])),
-    ]
-
-    def decorated_player(p):
-        return {
-            'name': p['name'],
-            'civilization_name': static.civilization_name(p['civ']),
-            'team': p['team']
-        }
-    players = [decorated_player(p) for p in header_dict['players']]
-    command_summary = CommandSummaryReport(header_dict, timestamped_commands)
-    unit_production = UnitProductionReport(header_dict, timestamped_commands)
-    actions_rate = ActionsRateReport(header_dict, timestamped_commands)
+    report_data = report(header_dict, timestamped_commands)
 
     jsdata = {
         'aps_graph': {
@@ -35,14 +19,16 @@ def render_html(header_dict, timestamped_commands):
         }
     }
 
+
     fileDir = os.path.dirname(os.path.realpath(__file__))
     searchpath = [os.path.join(fileDir, "templates/"), os.path.join(fileDir, "js/dist")]
     templateLoader = jinja2.FileSystemLoader(searchpath=searchpath)
     templateEnv = jinja2.Environment(loader=templateLoader)
+    templateEnv.globals['include_file'] = include_file
     template = templateEnv.get_template("report.html")
     return template.render(
-        game_attrs=game_attributes,
-        players=players,
-        command_summary=command_summary,
-        unit_production=unit_production,
+        game_attrs=report_data['header']['game_attributes'],
+        players=report_data['header']['players'],
+        command_summary=report_data['reports']['command_summary'],
+        unit_production=report_data['reports']['unit_production'],
         jsdata=json.dumps(jsdata))

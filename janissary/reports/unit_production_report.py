@@ -2,12 +2,15 @@ import janissary.body as body
 import janissary.static as static
 
 class UnitLogEntry(object):
-        def __init__(self, player_id, unit_type, building_id, delta, timestamp):
-            self.player_id = player_id
-            self.unit_type = unit_type
-            self.building_id = building_id
-            self.delta = delta
-            self.timestamp = timestamp
+    def __init__(self, player_id, unit_type, building_id, delta, timestamp):
+        self.player_id = player_id
+        self.unit_type = unit_type
+        self.building_id = building_id
+        self.delta = delta
+        self.timestamp = timestamp
+
+    def serializeable(self):
+        return self.__dict__
 
 class UnitProductionReport(object):
     """Count the number of units produced throughout the game
@@ -118,3 +121,15 @@ class UnitProductionReport(object):
                 count += entry.delta
         return count
 
+    def serializeable(self):
+        """Return a serializeable dict representing the report
+    
+        For serialization to, e.g. JSON or YAML
+        """
+        return {
+            'unit_log': [entry.serializeable() for entry in self.unit_log],
+            'total_units_table': {
+                'header': self.total_units_table_header(),
+                'rows': self.total_units_rows()
+            }
+        }

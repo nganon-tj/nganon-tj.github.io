@@ -46,3 +46,13 @@ class ActionsRateReport(object):
             self.series[player_id] = [(t, r) for t, r in zip(time, command_rate)]
             count = sum([1 for cmd in timestamped_commands if cmd.player_id() == player_id])
             self.average[player_id] = float(count) * 1000.0 / (end_time - start_time)
+
+    def serializeable(self):
+        """Returns a serializable dict for this report
+
+        Which can be serialized to, e.g. JSON or YAML
+        """
+        return {
+            'series': self.series,
+            'average': self.average
+        }

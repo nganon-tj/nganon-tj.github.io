@@ -3,3 +3,5 @@ node_modules/
 *.pyc
 *.egg-info
 venv
+janissary/reports/js/public/devdata.json
+janissary/reports/js/dist/main.js

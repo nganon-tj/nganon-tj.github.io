@@ -17,15 +17,27 @@ def collect_events(player_id, timestamped_commands, period_ms):
     cur_time = timestamped_commands[0].timestamp
     end_time = timestamped_commands[-1].timestamp
 
+    all_command_types = []
+    for cmd in timestamped_commands:
+        if cmd.command_name() not in all_command_types:
+            all_command_types.append(cmd.command_name())
+    
     cmd_idx = 0
     while cur_time < end_time:
-        commands_this_period = 0
+        commands_this_period = {'Total': 0}
+        for cmd in all_command_types:
+            commands_this_period[cmd] = 0
+
         while cmd_idx < len(timestamped_commands) and timestamped_commands[cmd_idx].timestamp < cur_time + period_ms:
             if timestamped_commands[cmd_idx].player_id() == player_id:
-                commands_this_period += 1
+                commands_this_period['Total'] += 1
+                commands_this_period[timestamped_commands[cmd_idx].command_name()] += 1
             cmd_idx += 1
         time.append(cur_time)
-        command_rate.append(60.0 * float(commands_this_period) / (period_ms * 1e-3) )
+        # Normalize command counts to counts per minute
+        for k, v in commands_this_period.items():
+            commands_this_period[k] = 60 * v / (period_ms * 1e-3)
+        command_rate.append(commands_this_period)
         cur_time += period_ms
 
     return time, command_rate

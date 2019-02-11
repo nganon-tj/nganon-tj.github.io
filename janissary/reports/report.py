@@ -16,6 +16,7 @@ def report(header_dict, timestamped_commands: List[TimestampedCommand]):
     """
     def decorated_player(p: dict) -> dict:
         return {
+            'player_id': p['player_index'],
             'name': p['name'],
             'civilization_name': static.civilization_name(p['civ']),
             'team': p['team']

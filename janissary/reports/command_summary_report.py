@@ -72,7 +72,7 @@ class CommandSummaryReport(object):
                 'header': self.player_command_headers(),
                 'rows': self.player_command_rows()
             },
-            'unassigned_command_headers': {
+            'unassigned_command_table': {
                 'header': self.unassigned_command_headers(),
                 'row': self.unassigned_command_counts()
             }

@@ -8,6 +8,8 @@ import FormControl from '@material-ui/core/FormControl';
 import "chartjs-plugin-colorschemes";
 import { object } from "prop-types";
 
+import GenericTable from "./GenericTable.js";
+
 class Plot extends Component {
     totalData() {
         let labels = this.props.report.reports.actions_rate.series[1].map((item) => {
@@ -24,7 +26,9 @@ class Plot extends Component {
                     label: player_name,
                     data: this.props.report.reports.actions_rate.series[player_id].map((item) => {
                             return item[1]['Total'];
-                        })
+                        }),
+                    lineTension: 0 // Don't do cubic interpolation; it's all lies
+
                 }
                 // return {
                 //     label: player_name,
@@ -72,7 +76,6 @@ class Plot extends Component {
             })
             series[player_id][i][1]["Other"] = other_count;
         }
-        
 
         return {
             datasets: action_types.map((action) => {
@@ -81,7 +84,8 @@ class Plot extends Component {
                     data: series[player_id].map((item) => {
                         // convert ms to minutes for x axis
                         return {x: item[0]/60.0/1000.0, y: item[1][action] };
-                    })
+                    }),
+                    lineTension: 0 // Don't do cubic interpolation; it's all lies
                 }
             })
         };
@@ -224,6 +228,7 @@ class ActionRate extends Component{
         this.setState({plotSelect: parseInt(value)});
         console.log("Player selected: ", value);
     }
+
     render() {
         return (
             <div>
@@ -233,6 +238,15 @@ class ActionRate extends Component{
                         <Plot report={this.props.report} plotSelect={this.state.plotSelect} />
                     </div>
                     <PlayerSelector players={this.props.report.header.players} value="0" onChange={this.handlePlayerSelect} />
+                </div>
+                <div>
+                    <h3>Total player commands</h3>
+                    <GenericTable header={this.props.report.reports.command_summary.player_command_table.header} rows={this.props.report.reports.command_summary.player_command_table.rows} />
+                </div>
+                <div>
+                    <h3>Unassigned Commands</h3>
+                    <p>These are commands that were found in the log, but were not assigned to any player. This is probably because they are not understood by the log parser.</p>
+                    <GenericTable header={this.props.report.reports.command_summary.unassigned_command_table.header} rows={[this.props.report.reports.command_summary.unassigned_command_table.row]} />
                 </div>
             </div>
         )

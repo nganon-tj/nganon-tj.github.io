@@ -1,3 +1,5 @@
+import math
+
 import janissary.body as body
 import janissary.static as static
 
@@ -97,18 +99,20 @@ class UnitProductionReport(object):
                     self.unit_log.remove(entry_to_update)
                 else:
                     entry_to_update.delta -= 1
+
+        self.time_vector = self._compute_time_points(timestamped_commands)
         
     def unit_log_for_player(self, player_id):
-        [x for x in self.unit_log if x['player_id'] == player_id]
+        return [x for x in self.unit_log if x.player_id == player_id]
     
     def total_units_table_header(self):
-        return ["Player"] + [static.unit_name(id) for id in self._type_ids]
+        return ["Unit"] + [self._header_dict['players'][player_id-1]['name'] for player_id in range(self._num_players)]
 
     def total_units_rows(self):
         rows = []
-        for player_id in range(1, self._num_players + 1):
-            row = [self._header_dict['players'][player_id-1]['name']]
-            for type_id in self._type_ids:
+        for type_id in self._type_ids: 
+            row = [static.unit_name(type_id)]
+            for player_id in range(1, self._num_players + 1):
                 row.append(self._count_total(player_id=player_id, unit_type=type_id))
             rows.append(row)
         return rows
@@ -121,6 +125,51 @@ class UnitProductionReport(object):
                 count += entry.delta
         return count
 
+    @staticmethod
+    def _compute_time_points(timestamped_commands, deltaT=60.0):
+        time = []
+        cur_time = round(timestamped_commands[0].timestamp * 1e-3 / 60.0) * 60.0
+        end_time = timestamped_commands[-1].timestamp * 1e-3
+        while cur_time < end_time: 
+            time.append(cur_time)
+            cur_time += deltaT
+        return time
+    
+    def _compute_player_counts(self):
+        def _compute_unit_counts(player_id):
+            player_log = self.unit_log_for_player(player_id)
+            # Collect all the unit types built by this player during the game
+            unit_counts = {}
+            for entry in player_log:
+                if entry.unit_type not in unit_counts:
+                    unit_counts[entry.unit_type] = {
+                        'unit_name': static.unit_name(entry.unit_type),
+                        'counts': []
+                    }
+            
+            log_idx = 0
+            period_counter = { unit_id: 0 for unit_id in unit_counts.keys() }
+            for cur_time in self.time_vector:
+                while log_idx < len(player_log):
+                    entry = player_log[log_idx]
+                    if entry.timestamp * 1e-3 > cur_time:
+                        break
+                    log_idx += 1
+                    period_counter[entry.unit_type] += entry.delta
+
+                for unit_id in unit_counts.keys(): 
+                    unit_counts[unit_id]['counts'].append(period_counter[unit_id])
+            return unit_counts
+
+        player_counts = {}
+        for player_id in range(1, self._num_players + 1):
+            player_counts[player_id] = {
+                'player_name': self._header_dict['players'][player_id-1]['name'],
+                'units': _compute_unit_counts(player_id)
+            }
+        
+        return player_counts
+
     def serializeable(self):
         """Return a serializeable dict representing the report
     
@@ -131,5 +180,9 @@ class UnitProductionReport(object):
             'total_units_table': {
                 'header': self.total_units_table_header(),
                 'rows': self.total_units_rows()
+            },
+            'series': {
+                'time': self.time_vector,
+                'players': self._compute_player_counts()
             }
         }

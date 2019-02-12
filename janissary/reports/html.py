@@ -12,23 +12,10 @@ def include_file(ctx, name):
 def render_html(header_dict, timestamped_commands):
     report_data = report(header_dict, timestamped_commands)
 
-    jsdata = {
-        'aps_graph': {
-            'series': actions_rate.series,
-            'players': {x['player_index']: x['name'] for x in header_dict['players']}
-        }
-    }
-
-
     fileDir = os.path.dirname(os.path.realpath(__file__))
     searchpath = [os.path.join(fileDir, "templates/"), os.path.join(fileDir, "js/dist")]
     templateLoader = jinja2.FileSystemLoader(searchpath=searchpath)
     templateEnv = jinja2.Environment(loader=templateLoader)
     templateEnv.globals['include_file'] = include_file
     template = templateEnv.get_template("report.html")
-    return template.render(
-        game_attrs=report_data['header']['game_attributes'],
-        players=report_data['header']['players'],
-        command_summary=report_data['reports']['command_summary'],
-        unit_production=report_data['reports']['unit_production'],
-        jsdata=json.dumps(jsdata))
+    return template.render(jsdata=json.dumps(report_data))

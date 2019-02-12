@@ -36,6 +36,10 @@ documentation of the body section format.
 https://github.com/goto-bus-stop/recanalyst is a PHP project with good
 documentation of the header format.
 
+https://github.com/aocpip/aoe2stats is a well-maintained and up-to-date collection
+of stats (including resource costs) for all units, buildings, technologies etc in 
+the game, conveniently stored in JSON format.
+
 The two of these got me most of the way there, in terms of understanding
 the format. I found there were a few changes in 5.8 not yet (at time of this
 writing) incorporated into either of those. Namely, some extra data in the

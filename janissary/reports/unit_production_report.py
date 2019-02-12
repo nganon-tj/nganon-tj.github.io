@@ -106,7 +106,7 @@ class UnitProductionReport(object):
         return [x for x in self.unit_log if x.player_id == player_id]
     
     def total_units_table_header(self):
-        return ["Unit"] + [self._header_dict['players'][player_id-1]['name'] for player_id in range(self._num_players)]
+        return ["Unit"] + [self._header_dict['players'][player_id]['name'] for player_id in range(self._num_players)]
 
     def total_units_rows(self):
         rows = []

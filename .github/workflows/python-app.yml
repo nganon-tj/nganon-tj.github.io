@@ -67,12 +67,11 @@ jobs:
         working-directory: janissary/reports/js
         run: yarn install
 
-      - name: Set Webpack compatibility env
-        run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $GITHUB_ENV
-
       - name: Build frontend with webpack
         working-directory: janissary/reports/js
         run: yarn build
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Download backend artifacts
         uses: actions/download-artifact@v4

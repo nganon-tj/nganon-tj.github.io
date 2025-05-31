@@ -1,0 +1,39 @@
+<!-- This file is for the development server. It is *not* used when running jannisary 
+    In jannisary, the index.html file is created from a template, with both the javascript
+    and JSON data injected into the html file. 
+
+    This file loads the react and JSON data from the filesystem, and allows for 
+    using the webpack dev server with auto-reload and all that goodness.
+-->
+<html>
+    <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <title>Janissary React Dev Page</title>
+    </head>
+    <body>
+        <div id="root"></div>
+
+        <script type="application/json" id="data"></script>
+        <script type="application/javascript">
+            window.addEventListener("load", function(event) {
+                // Get the JSON file, and insert it into the data tag; then we can load main.js
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/devdata.json');
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        // load main javascript file now that we've kluged in the JSON data
+                        document.getElementById('data').innerHTML = xhr.responseText;
+                        var script = document.createElement('script');
+                        script.src = "/main.js";
+                        document.head.appendChild(script); 
+                    } else {
+                        alert('Request failed getting devdata.json.  Returned status of ' + xhr.status);
+                    }
+                };
+                xhr.send();
+            });
+        </script>
+        <!--<script type="application/javascript" src="/main.js"></script>-->
+    </body>
+</html>

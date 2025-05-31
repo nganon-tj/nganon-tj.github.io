@@ -41,4 +41,4 @@ jobs:
     - name: Generate Janissary report
       run: |
         mkdir -p docs
-        janissary report test/data/example_v5.8.aoe2record docs/index.html
+        janissary report test/data/example_v5.8.aoe2record docs/index.html && pwd && ls -la 

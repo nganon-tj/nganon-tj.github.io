@@ -35,19 +35,30 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        
     - name: Test with pytest
       run: |
         pytest
     - name: Generate Janissary report
       run: |
         mkdir -p docs
-        janissary report test/data/example_v5.8.aoe2record docs/index.html && pwd && ls -la docs/
+        janissary report test/data/example_v5.8.aoe2record docs/index.html
+   
+    - name: Generate Janissary command-yaml report
+      run: |
+        mkdir -p docs
+        janissary command-yaml logfile.aoe2record docs/commands.yaml
+    
+    - name: Generate Janissary header-yaml report
+      run: |
+        mkdir -p docs
+        janissary header-yaml logfile.aoe2record docs/header.haml
 
     - name: Commit and push report to docs/
       run: |
         git config user.name "github-actions"
         git config user.email "github-actions@github.com"
-        git add docs/index.html
+        git add docs/index.html docs/commands.yaml docs/header.haml 
         git commit -m "Update janissary report" || echo "No changes to commit"
         git push
 

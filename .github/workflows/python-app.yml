@@ -47,12 +47,12 @@ jobs:
     - name: Generate Janissary command-yaml report
       run: |
         mkdir -p docs
-        janissary command-yaml logfile.aoe2record docs/commands.yaml
+        janissary command-yaml test/data/example_v5.8.aoe2record docs/commands.yaml
     
     - name: Generate Janissary header-yaml report
       run: |
         mkdir -p docs
-        janissary header-yaml logfile.aoe2record docs/header.haml
+        janissary header-yaml test/data/example_v5.8.aoe2record docs/header.haml
 
     - name: Commit and push report to docs/
       run: |

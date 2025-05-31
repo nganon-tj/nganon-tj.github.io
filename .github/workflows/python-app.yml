@@ -1,10 +1,10 @@
-name: Janissary Full Build & Deploy
+name: Janissary Build & Deploy
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 permissions:
   contents: write
@@ -14,9 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Python 3.10
+      - name: Set up Python
         uses: actions/setup-python@v3
         with:
           python-version: "3.10"
@@ -25,20 +26,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install flake8 pytest
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      - name: Install development requirements
-        run: |
           pip install -e .[dev]
 
-      - name: Lint with flake8
+      - name: Lint Python code
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Run tests with pytest
-        run: |
-          pytest
+      - name: Run tests
+        run: pytest
 
       - name: Generate Janissary backend reports
         run: |
@@ -59,7 +55,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -67,10 +64,12 @@ jobs:
           node-version: '18'
 
       - name: Install frontend dependencies
+        working-directory: reports/js
         run: yarn install
 
-      - name: Build frontend
-        run: yarn build  # Assumes output goes to ./build
+      - name: Build frontend with webpack
+        working-directory: reports/js
+        run: yarn build
 
       - name: Download backend artifacts
         uses: actions/download-artifact@v4
@@ -78,14 +77,14 @@ jobs:
           name: backend-artifacts
           path: backend_output
 
-      - name: Copy backend reports to build folder
+      - name: Copy backend artifacts into build
         run: |
-          cp -r backend_output/* build/
-          mkdir -p build/reports/js/public
-          cp -r backend_output/reports/js/public/devdata.json build/reports/js/public/
+          mkdir -p reports/js/dist/reports/js/public
+          cp -r backend_output/* reports/js/dist/
+          cp backend_output/reports/js/public/devdata.json reports/js/dist/reports/js/public/
 
-      - name: Deploy to GitHub Pages (gh-pages branch)
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
+          publish_dir: reports/js/dist

@@ -1,7 +1,4 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
-name: Python janisarry application
+name: Janissary Full Build & Deploy
 
 on:
   push:
@@ -13,58 +10,83 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  backend-build:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: install with development requirements
-      run: |
-        pip install -e .[dev]
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-        
-    - name: Test with pytest
-      run: |
-        pytest
-    - name: Generate Janissary report
-      run: |
-        mkdir -p docs
-        janissary report test/data/example_v5.8.aoe2record docs/report.html
-   
-    - name: Generate Janissary command-yaml report
-      run: |
-        mkdir -p docs
-        janissary command-yaml test/data/example_v5.8.aoe2record docs/commands.yaml
-    
-    - name: Generate Janissary header-yaml report
-      run: |
-        mkdir -p docs
-        janissary header-yaml test/data/example_v5.8.aoe2record docs/header.haml
+      - uses: actions/checkout@v4
 
-    - name: Generate Janissary report
-      run: |
-        mkdir -p docs
-        janissary report --json mylog.aoe2record reports/js/public/devdata.json
-   
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
 
-    - name: Commit and push report to docs/
-      run: |
-        git config user.name "github-actions"
-        git config user.email "github-actions@github.com"
-        git add docs/index.html docs/commands.yaml docs/header.haml reports/js/public/devdata.json
-        git commit -m "Update janissary report" || echo "No changes to commit"
-        git push
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+      - name: Install development requirements
+        run: |
+          pip install -e .[dev]
+
+      - name: Lint with flake8
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Run tests with pytest
+        run: |
+          pytest
+
+      - name: Generate Janissary backend reports
+        run: |
+          mkdir -p output/reports/js/public
+          janissary report test/data/example_v5.8.aoe2record output/report.html
+          janissary command-yaml test/data/example_v5.8.aoe2record output/commands.yaml
+          janissary header-yaml test/data/example_v5.8.aoe2record output/header.haml
+          janissary report --json mylog.aoe2record output/reports/js/public/devdata.json
+
+      - name: Upload backend artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-artifacts
+          path: output/
+
+  frontend-build:
+    needs: backend-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+
+      - name: Install frontend dependencies
+        run: yarn install
+
+      - name: Build frontend
+        run: yarn build  # Assumes output goes to ./build
+
+      - name: Download backend artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-artifacts
+          path: backend_output
+
+      - name: Copy backend reports to build folder
+        run: |
+          cp -r backend_output/* build/
+          mkdir -p build/reports/js/public
+          cp -r backend_output/reports/js/public/devdata.json build/reports/js/public/
+
+      - name: Deploy to GitHub Pages (gh-pages branch)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build

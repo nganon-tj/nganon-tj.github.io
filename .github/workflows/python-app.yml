@@ -42,4 +42,4 @@ jobs:
         pytest
     - name: Test janissary report
       run: |
-        janissary report logfile.aoe2record logfile_report.html
+        janissary report test/data/example_v5.8.aoe2record index.html

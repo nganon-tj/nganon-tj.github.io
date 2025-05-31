@@ -42,7 +42,7 @@ jobs:
     - name: Generate Janissary report
       run: |
         mkdir -p docs
-        janissary report test/data/example_v5.8.aoe2record docs/index.html
+        janissary report test/data/example_v5.8.aoe2record docs/report.html
    
     - name: Generate Janissary command-yaml report
       run: |
@@ -54,11 +54,17 @@ jobs:
         mkdir -p docs
         janissary header-yaml test/data/example_v5.8.aoe2record docs/header.haml
 
+    - name: Generate Janissary report
+      run: |
+        mkdir -p docs
+        janissary report --json mylog.aoe2record reports/js/public/devdata.json
+   
+
     - name: Commit and push report to docs/
       run: |
         git config user.name "github-actions"
         git config user.email "github-actions@github.com"
-        git add docs/index.html docs/commands.yaml docs/header.haml 
+        git add docs/index.html docs/commands.yaml docs/header.haml reports/js/public/devdata.json
         git commit -m "Update janissary report" || echo "No changes to commit"
         git push
 

@@ -64,11 +64,11 @@ jobs:
           node-version: '18'
 
       - name: Install frontend dependencies
-        working-directory: reports/js
+        working-directory: janissary/reports/js
         run: yarn install
 
       - name: Build frontend with webpack
-        working-directory: reports/js
+        working-directory: janissary/reports/js
         run: yarn build
 
       - name: Download backend artifacts
@@ -79,12 +79,12 @@ jobs:
 
       - name: Copy backend artifacts into build
         run: |
-          mkdir -p reports/js/dist/reports/js/public
-          cp -r backend_output/* reports/js/dist/
-          cp backend_output/reports/js/public/devdata.json reports/js/dist/reports/js/public/
+          mkdir -p janissary/reports/js/dist/reports/js/public
+          cp -r backend_output/* janissary/reports/js/dist/
+          cp backend_output/reports/js/public/devdata.json janissary/reports/js/dist/reports/js/public/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: reports/js/dist
+          publish_dir: janissary/reports/js/dist

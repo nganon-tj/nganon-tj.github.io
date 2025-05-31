@@ -85,8 +85,14 @@ jobs:
           cp -r backend_output/* janissary/reports/js/dist/
           cp backend_output/reports/js/public/devdata.json janissary/reports/js/dist/reports/js/public/
 
+      - name: Prepare /docs directory for GitHub Pages
+        run: |
+          rm -rf docs  # Clean up existing docs if any
+          mkdir -p docs
+          cp -r janissary/reports/js/dist/* docs/
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: janissary/reports/js/dist
+          publish_dir: docs 

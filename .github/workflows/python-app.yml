@@ -46,7 +46,7 @@ jobs:
           janissary report test/data/example_v5.8.aoe2record output/report.html
           janissary command-yaml test/data/example_v5.8.aoe2record output/commands.yaml
           janissary header-yaml test/data/example_v5.8.aoe2record output/header.haml
-          janissary report --json mylog.aoe2record output/reports/js/public/devdata.json
+          janissary report --json test/data/example_v5.8.aoe2record output/reports/js/public/devdata.json
 
       - name: Upload backend artifacts
         uses: actions/upload-artifact@v4

@@ -38,7 +38,6 @@ jobs:
 
       - name: Generate Janissary backend reports with latest record file
         run: |
-          # latest_record=$(ls -t test/data/*.aoe2record | head -n 1)
           latest_record=$(ls -1t test/data/* | head -n 1)
           
           echo "Using latest record file: $latest_record"

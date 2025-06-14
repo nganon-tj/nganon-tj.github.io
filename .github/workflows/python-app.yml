@@ -39,7 +39,7 @@ jobs:
       - name: Generate Janissary backend reports with latest record file
         run: |
           #latest_record=$(ls -1t test/data/* | head -n 1)
-          latest_record="test/data/20250531-211339 - recorded game.mgz"
+          latest_record="test/data/SP Replay v5.8 @2025.06.14 220844.aoe2record"
           echo "Using latest record file: $latest_record"
           mkdir -p output/reports/js/public
           janissary report "$latest_record" output/report.html

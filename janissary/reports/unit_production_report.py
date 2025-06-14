@@ -94,7 +94,8 @@ class UnitProductionReport(object):
                         break
                 if entry_to_update is None:
                     # I don't believe this is possible, so will fail loudly if it occurs
-                    raise RuntimeError("Couldn't find corresponding TRAIN command for CANCEL: %s" % attr)
+                    #raise RuntimeError("Couldn't find corresponding TRAIN command for CANCEL: %s" % attr)
+                    print("Couldn't find corresponding TRAIN command for CANCEL: %s" % attr)
                 if entry_to_update.delta == 1:
                     self.unit_log.remove(entry_to_update)
                 else:

@@ -102,8 +102,8 @@ class Header(object):
         sio.read_u32()
         sio.read_u32()
 
-        if version < 1004.0:
-            raise RuntimeError("Need to implement some things for older versions")
+        #if version < 1004.0:
+        #    raise RuntimeError("Need to implement some things for older versions")
         
         players = []
 

@@ -40,7 +40,8 @@ jobs:
         run: |
           #latest_record=$(ls -1t test/data/* | head -n 1)
           #latest_record="test/data/MP Replay v5.8 @2025.06.14 223810 (1).aoe2record"
-          latest_record="test/data/20250628-215047 - recorded game.mgz"
+          #latest_record="test/data/20250628-215047 - recorded game.mgz"
+          latest_record="test/data/SP Replay v5.8 @2025.07.05 204034.aoe2record"
           
           echo "Using latest record file: $latest_record"
           mkdir -p output/reports/js/public
